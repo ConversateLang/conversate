@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { UserAuth } from '../context/AuthCon'
@@ -24,6 +25,13 @@ const Register = () => {
     })
   },[])
 
+=======
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+
+const Register = () => {
+  const navigate = useNavigate()
+>>>>>>> 15f7462 (created landing and dashboard)
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -115,6 +123,7 @@ const Register = () => {
         console.log('Registration attempt:', formData)
         
         // Simulate API call
+<<<<<<< HEAD
         
         const check = await signUpUser(formData.email, formData.password, formData.username, formData.displayName);
         if (check.success){
@@ -124,6 +133,12 @@ const Register = () => {
         
       }catch(err){
         console.error("error during reg: ", err)
+=======
+        await new Promise(resolve => setTimeout(resolve, 1500))
+        
+        // After successful registration, redirect to onboarding
+        navigate('/onboarding')
+>>>>>>> 15f7462 (created landing and dashboard)
       } finally {
         setIsLoading(false)
       }
