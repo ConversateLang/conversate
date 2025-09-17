@@ -153,7 +153,7 @@ const Login = () => {
           </form>
           
 
-          {hasError && <p>Invalid Credentials or Verify Email!</p>}
+          {hasError && <p className='text-error text-center'>Invalid Credentials or Verify Email!</p>}
           {/* Divider */}
           <div className="divider my-8 text-base-content/60">New to Conversate?</div>
           
