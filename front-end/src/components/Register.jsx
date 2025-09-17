@@ -17,12 +17,12 @@ const Register = () => {
 
   useEffect(()=>{
     setSignSuccess(false);
-    supabase.auth.getSession().then(info=>{
+    supabase.auth.getSession().then((info) => {
       if(info.data.session){
         nav('/dashboard')
       }
     })
-  },[])
+  },[nav])
 
   const [formData, setFormData] = useState({
     email: '',

@@ -13,12 +13,12 @@ const Login = () => {
   const [hasError, setHasError] = useState(false);
 
   useEffect(()=>{
-    supabase.auth.getSession().then(info=>{
+    supabase.auth.getSession().then((info) => {
       if(info.data.session){
         nav('/dashboard')
       }
     })
-  },[])
+  },[nav])
 
   const [formData, setFormData] = useState({
     email: '',
@@ -39,18 +39,18 @@ const Login = () => {
     setIsLoading(true)
     
     try {
-      
       console.log('Login attempt:', formData)
       const check = await signInUser(formData.email, formData.password);
-        if (check.success){
-          nav('/dashboard');
-        }else{
-          setHasError(true);
-          console.log("CANT SIGN IN");
-        }
+      
+      if (check.success) {
+        nav('/dashboard');
+      } else {
+        setHasError(true);
+        console.log("CANT SIGN IN");
+      }
     } catch(err){
       console.error("error while trying to signin: ", err);
-    }finally {
+    } finally {
       setIsLoading(false)
     }
   }
