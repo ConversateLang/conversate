@@ -1,8 +1,23 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserAuth } from '../context/AuthCon'
 import logo from '../assets/logo.png'
 
 const Landing = () => {
+  const navigate = useNavigate()
+  const { session } = UserAuth()
+
+  useEffect(() => {
+    // Only run this check if session is not undefined (it's been loaded)
+    if (session !== undefined) {
+      if (session?.user?.id) {
+        // User is authenticated, redirect to dashboard
+        navigate('/dashboard')
+      }
+      // If session is null (not authenticated), stay on landing page
+    }
+  }, [session, navigate])
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-base-100 to-secondary/10">
       {/* Navigation */}
