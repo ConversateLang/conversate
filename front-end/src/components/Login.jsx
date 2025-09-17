@@ -1,9 +1,27 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserAuth } from '../context/AuthCon';
+import { supabase } from '../supabaseClient';
+import { useEffect } from 'react';
 
 const Login = () => {
+  
+
+  const {signInUser} = UserAuth();
+  const nav = useNavigate();
+
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(()=>{
+    supabase.auth.getSession().then(info=>{
+      if(info.data.session){
+        nav('/dashboard')
+      }
+    })
+  },[])
+
   const [formData, setFormData] = useState({
-    usernameOrEmail: '',
+    email: '',
     password: ''
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -21,11 +39,18 @@ const Login = () => {
     setIsLoading(true)
     
     try {
-      // TODO: Implement login logic
+      
       console.log('Login attempt:', formData)
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-    } finally {
+      const check = await signInUser(formData.email, formData.password);
+        if (check.success){
+          nav('/dashboard');
+        }else{
+          setHasError(true);
+          console.log("CANT SIGN IN");
+        }
+    } catch(err){
+      console.error("error while trying to signin: ", err);
+    }finally {
       setIsLoading(false)
     }
   }
@@ -41,18 +66,18 @@ const Login = () => {
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Username/Email Input */}
+            {/* Email Input */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium">Username or Email</span>
+                <span className="label-text font-medium">Email</span>
               </label>
               <div className="relative">
                 <input
                   type="text"
-                  name="usernameOrEmail"
-                  value={formData.usernameOrEmail}
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
-                  placeholder="Enter your username or email"
+                  placeholder="Enter your email"
                   className="input input-bordered w-full pl-12 focus:input-primary transition-all duration-200"
                   required
                 />
@@ -126,7 +151,9 @@ const Login = () => {
               </button>
             </div>
           </form>
+          
 
+          {hasError && <p className='text-error text-center'>Invalid Credentials or Verify Email!</p>}
           {/* Divider */}
           <div className="divider my-8 text-base-content/60">New to Conversate?</div>
           

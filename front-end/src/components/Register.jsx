@@ -1,7 +1,29 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect} from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserAuth } from '../context/AuthCon'
+import { supabase } from '../supabaseClient'
+
 
 const Register = () => {
+
+
+  const {signUpUser} = UserAuth();
+  const nav = useNavigate();
+
+  const [signSuccess, setSignSuccess] = useState(false);
+
+
+
+
+  useEffect(()=>{
+    setSignSuccess(false);
+    supabase.auth.getSession().then(info=>{
+      if(info.data.session){
+        nav('/dashboard')
+      }
+    })
+  },[])
+
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -91,8 +113,17 @@ const Register = () => {
       try {
         // TODO: Implement registration logic
         console.log('Registration attempt:', formData)
+        
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        
+        const check = await signUpUser(formData.email, formData.password, formData.username, formData.displayName);
+        if (check.success){
+          setSignSuccess(true);
+          //nav('/login');
+        }
+        
+      }catch(err){
+        console.error("error during reg: ", err)
       } finally {
         setIsLoading(false)
       }
@@ -308,6 +339,8 @@ const Register = () => {
               </button>
             </div>
           </form>
+          
+          {signSuccess && <p className='text-success text-center'>Please Check your Email for Verification Link, then login!</p>}
 
           {/* Divider */}
           <div className="divider my-8 text-base-content/60">Already have an account?</div>
