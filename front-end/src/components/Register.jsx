@@ -1,7 +1,23 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect} from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserAuth } from '../context/AuthCon'
+import { supabase } from '../supabaseClient'
+
 
 const Register = () => {
+
+
+  const {session, signUpUser} = UserAuth();
+  const nav = useNavigate();
+
+  useEffect(()=>{
+    supabase.auth.getSession().then(info=>{
+      if(info.data.session){
+        nav('/dashboard')
+      }
+    })
+  },[])
+
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -91,8 +107,16 @@ const Register = () => {
       try {
         // TODO: Implement registration logic
         console.log('Registration attempt:', formData)
+        
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        
+        const check = await signUpUser(formData.email, formData.password, formData.username, formData.displayName);
+        if (check.success){
+          nav('/login');
+        }
+        
+      }catch(err){
+        console.error("error during reg: ", err)
       } finally {
         setIsLoading(false)
       }
